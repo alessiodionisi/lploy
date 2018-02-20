@@ -7,14 +7,14 @@ const execa = require('execa')
 
 try {
   const config = yaml.safeLoad(fs.readFileSync(path.resolve(process.env.PWD, 'lploy.yaml'), 'utf8'))
-  console.log(config)
 
   const sourceFolder = path.resolve(process.env.PWD, config.SourceFolder || 'src')
   const functionsFolder = path.resolve(process.env.PWD, '.functions')
 
   for (const functionName of Object.keys(config.Functions)) {
     const functionConfig = config.Functions[functionName]
-    const result = execa.sync('yarn', [
+
+    execa.sync('yarn', [
       'webpack',
       '--config',
       path.resolve(process.env.PWD, 'webpack.config.js'),
@@ -27,7 +27,23 @@ try {
       '--output-library',
       functionName
     ])
-    console.log(result)
+
+    execa.sync('zip', [
+      path.resolve(functionsFolder, `${functionName}.zip`),
+      '-r',
+      '.'
+    ], {
+      cwd: path.resolve(functionsFolder, functionName)
+    })
+
+    execa.sync('aws', [
+      'lambda',
+      'update-function-code',
+      '--function-name',
+      functionName,
+      '--zip-file',
+      `fileb://${path.resolve(functionsFolder, `${functionName}.zip`)}`
+    ])
   }
 } catch (error) {
   console.error(error)
