@@ -1,0 +1,18 @@
+{
+  "name": "lploy",
+  "version": "1.0.0-alpha.1",
+  "description": "Lambda Deploy",
+  "main": "lploy.js",
+  "repository": "git@github.com:adnsio/lploy.git",
+  "author": "Alessio Dionisi <hello@adns.io>",
+  "license": "MIT",
+  "bin": {
+    "lploy": "./lploy.js"
+  },
+  "preferGlobal": true,
+  "dependencies": {
+    "execa": "^0.9.0",
+    "js-yaml": "^3.10.0",
+    "listr": "^0.13.0"
+  }
+}
