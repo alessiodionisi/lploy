@@ -1,6 +1,6 @@
 {
   "name": "lploy",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "description": "Lambda Deploy",
   "main": "lploy.js",
   "repository": "git@github.com:adnsio/lploy.git",
