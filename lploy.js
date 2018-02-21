@@ -14,8 +14,7 @@ try {
   for (const functionName of Object.keys(config.Functions)) {
     const functionConfig = config.Functions[functionName]
 
-    execa.sync('yarn', [
-      'webpack',
+    execa.sync(path.resolve(process.env.PWD, 'node_modules/webpack/bin/webpack.js'), [
       '--config',
       path.resolve(process.env.PWD, 'webpack.config.js'),
       '--entry',
