@@ -13,9 +13,7 @@ const config = yaml.safeLoad(fs.readFileSync(path.resolve(process.env.PWD, 'lplo
 const sourceFolder = path.resolve(process.env.PWD, config.SourceFolder || 'src')
 const functionsFolder = path.resolve(process.env.PWD, '.functions')
 
-for (const functionName of Object.keys(config.Functions)) {
-  const functionConfig = config.Functions[functionName]
-
+for (const functionConfig of config.Functions) {
   const functionTasks = []
 
   functionTasks.push({
@@ -26,22 +24,22 @@ for (const functionName of Object.keys(config.Functions)) {
       '--entry',
       path.resolve(sourceFolder, functionConfig.Source),
       '--output-path',
-      path.resolve(functionsFolder, functionName),
+      path.resolve(functionsFolder, functionConfig.Name),
       '--output-filename',
       'main.js',
       '--output-library',
-      functionName
+      functionConfig.Name
     ])
   })
 
   functionTasks.push({
     title: 'archive',
     task: () => execa('zip', [
-      path.resolve(functionsFolder, `${functionName}.zip`),
+      path.resolve(functionsFolder, `${functionConfig.Name}.zip`),
       '-r',
       '.'
     ], {
-      cwd: path.resolve(functionsFolder, functionName)
+      cwd: path.resolve(functionsFolder, functionConfig.Name)
     })
   })
 
@@ -51,14 +49,14 @@ for (const functionName of Object.keys(config.Functions)) {
       'lambda',
       'update-function-code',
       '--function-name',
-      functionName,
+      functionConfig.Name,
       '--zip-file',
-      `fileb://${path.resolve(functionsFolder, `${functionName}.zip`)}`
+      `fileb://${path.resolve(functionsFolder, `${functionConfig.Name}.zip`)}`
     ])
   })
 
   tasks.push({
-    title: functionName,
+    title: functionConfig.Name,
     task: () => new Listr(functionTasks)
   })
 }
