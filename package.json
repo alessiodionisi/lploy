@@ -1,17 +1,30 @@
 {
   "name": "lploy",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "description": "Deploy your Webpack functions to AWS Lambda",
-  "main": "lploy.js",
   "repository": "git@github.com:adnsio/lploy.git",
   "author": "Alessio Dionisi <hello@adns.io>",
   "license": "MIT",
   "bin": {
-    "lploy": "./lploy.js"
+    "lploy": "./bin/lploy.js"
+  },
+  "files": [
+    "bin"
+  ],
+  "scripts": {
+    "build": "tsc -p ."
   },
   "dependencies": {
     "execa": "^0.9.0",
     "js-yaml": "^3.10.0",
     "listr": "^0.13.0"
+  },
+  "devDependencies": {
+    "@types/execa": "^0.8.1",
+    "@types/js-yaml": "^3.10.1",
+    "@types/node": "^9.4.6",
+    "tslint": "^5.9.1",
+    "tslint-config-standard": "^7.0.0",
+    "typescript": "^2.7.2"
   }
 }

@@ -1,26 +1,29 @@
 #!/usr/bin/env node
 
-const yaml = require('js-yaml')
-const fs = require('fs')
-const path = require('path')
-const execa = require('execa')
-const Listr = require('listr')
+import * as yaml from 'js-yaml'
+import * as fs from 'fs'
+import * as path from 'path'
+import * as execa from 'execa'
+import * as Listr from 'listr'
+
+if (!process.env.PWD) throw new Error('undefined PWD env')
+const pwdFolder = process.env.PWD
 
 const tasks = []
 
-const config = yaml.safeLoad(fs.readFileSync(path.resolve(process.env.PWD, 'lploy.yaml'), 'utf8'))
+const config = yaml.safeLoad(fs.readFileSync(path.resolve(pwdFolder, 'lploy.yaml'), 'utf8'))
 
-const sourceFolder = path.resolve(process.env.PWD, config.SourceFolder || 'src')
-const functionsFolder = path.resolve(process.env.PWD, '.functions')
+const sourceFolder = path.resolve(pwdFolder, config.SourceFolder || 'src')
+const functionsFolder = path.resolve(pwdFolder, '.functions')
 
 for (const functionConfig of config.Functions) {
-  const functionTasks = []
+  const functionTasks: any[] = []
 
   functionTasks.push({
     title: 'webpack',
-    task: () => execa(path.resolve(process.env.PWD, 'node_modules/webpack/bin/webpack.js'), [
+    task: () => execa(path.resolve(pwdFolder, 'node_modules/webpack/bin/webpack.js'), [
       '--config',
-      path.resolve(process.env.PWD, 'webpack.config.js'),
+      path.resolve(pwdFolder, 'webpack.config.js'),
       '--entry',
       path.resolve(sourceFolder, functionConfig.Source),
       '--output-path',
@@ -61,4 +64,4 @@ for (const functionConfig of config.Functions) {
   })
 }
 
-new Listr(tasks).run().catch((error) => console.error(error))
+new Listr(tasks).run().catch((error: Error) => console.error(error))

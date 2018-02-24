@@ -2,6 +2,8 @@
 [![NPMV](https://img.shields.io/npm/v/lploy.svg?style=flat-square)](https://npmjs.org/package/lploy)
 [![NPMD](https://img.shields.io/npm/dt/lploy.svg?style=flat-square)](https://npmjs.org/package/lploy)
 
+[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)
+
 Deploy your Webpack functions to AWS Lambda
 
 ## Quick start
@@ -30,7 +32,7 @@ Deploy your Webpack functions to AWS Lambda
 
   ```
   "scripts": {
-    "lploy": "lploy"
+    "deploy": "lploy"
   }
   ```
 
@@ -59,10 +61,10 @@ Deploy your Webpack functions to AWS Lambda
 
   with yarn:
   ```
-  yarn lploy
+  yarn deploy
   ```
 
   with npm:
   ```
-  npm run lploy
+  npm run deploy
   ```
