@@ -1,7 +1,7 @@
 {
   "name": "lploy",
-  "version": "1.0.0-alpha.3",
-  "description": "Lambda Deploy",
+  "version": "1.0.0-alpha.4",
+  "description": "Deploy your Webpack functions to AWS Lambda",
   "main": "lploy.js",
   "repository": "git@github.com:adnsio/lploy.git",
   "author": "Alessio Dionisi <hello@adns.io>",

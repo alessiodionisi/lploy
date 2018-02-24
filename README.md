@@ -4,7 +4,7 @@
 
 Deploy your Webpack functions to AWS Lambda
 
-## How to use
+## Quick start
 - Install lploy as dev dependency of your project
   
   with yarn:
@@ -31,6 +31,27 @@ Deploy your Webpack functions to AWS Lambda
   ```
   "scripts": {
     "lploy": "lploy"
+  }
+  ```
+
+- Required `webpack.config.js` options:
+  
+  output libraryTarget commonjs2
+  ```
+  output: {
+    libraryTarget: 'commonjs2'
+  }
+  ```
+
+  target node
+  ```
+  target: 'node'
+  ```
+
+  externals aws-sdk
+  ```
+  externals: {
+    'aws-sdk': 'aws-sdk'
   }
   ```
 
