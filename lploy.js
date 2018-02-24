@@ -4,17 +4,23 @@ const yaml = require('js-yaml')
 const fs = require('fs')
 const path = require('path')
 const execa = require('execa')
+const Listr = require('listr')
 
-try {
-  const config = yaml.safeLoad(fs.readFileSync(path.resolve(process.env.PWD, 'lploy.yaml'), 'utf8'))
+const tasks = []
 
-  const sourceFolder = path.resolve(process.env.PWD, config.SourceFolder || 'src')
-  const functionsFolder = path.resolve(process.env.PWD, '.functions')
+const config = yaml.safeLoad(fs.readFileSync(path.resolve(process.env.PWD, 'lploy.yaml'), 'utf8'))
 
-  for (const functionName of Object.keys(config.Functions)) {
-    const functionConfig = config.Functions[functionName]
+const sourceFolder = path.resolve(process.env.PWD, config.SourceFolder || 'src')
+const functionsFolder = path.resolve(process.env.PWD, '.functions')
 
-    execa.sync(path.resolve(process.env.PWD, 'node_modules/webpack/bin/webpack.js'), [
+for (const functionName of Object.keys(config.Functions)) {
+  const functionConfig = config.Functions[functionName]
+
+  const functionTasks = []
+
+  functionTasks.push({
+    title: 'webpack',
+    task: () => execa(path.resolve(process.env.PWD, 'node_modules/webpack/bin/webpack.js'), [
       '--config',
       path.resolve(process.env.PWD, 'webpack.config.js'),
       '--entry',
@@ -26,16 +32,22 @@ try {
       '--output-library',
       functionName
     ])
+  })
 
-    execa.sync('zip', [
+  functionTasks.push({
+    title: 'archive',
+    task: () => execa('zip', [
       path.resolve(functionsFolder, `${functionName}.zip`),
       '-r',
       '.'
     ], {
       cwd: path.resolve(functionsFolder, functionName)
     })
+  })
 
-    execa.sync('aws', [
+  functionTasks.push({
+    title: 'deploy',
+    task: () => execa('aws', [
       'lambda',
       'update-function-code',
       '--function-name',
@@ -43,7 +55,12 @@ try {
       '--zip-file',
       `fileb://${path.resolve(functionsFolder, `${functionName}.zip`)}`
     ])
-  }
-} catch (error) {
-  console.error(error)
+  })
+
+  tasks.push({
+    title: functionName,
+    task: () => new Listr(functionTasks)
+  })
 }
+
+new Listr(tasks).run().catch((error) => console.error(error))
