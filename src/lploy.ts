@@ -1,20 +1,29 @@
 #!/usr/bin/env node
 
-import * as yaml from 'js-yaml'
-import * as fs from 'fs'
-import * as path from 'path'
-import * as execa from 'execa'
-import * as Listr from 'listr'
+require('any-observable/register')('rxjs')
+
+import yaml from 'js-yaml'
+import fs from 'fs'
+import path from 'path'
+import execa from 'execa'
+import Listr from 'listr'
 
 if (!process.env.PWD) throw new Error('undefined PWD env')
 const pwdFolder = process.env.PWD
 
 const tasks = []
 
-const config = yaml.safeLoad(fs.readFileSync(path.resolve(pwdFolder, 'lploy.yaml'), 'utf8'))
+const config = yaml.safeLoad(fs.readFileSync(path.resolve(pwdFolder, 'lploy.yaml'), 'utf8')) as {
+  SourceFolder: string
+  NamePrefix: string
+  Functions: {
+    Name: string
+    Source: string
+  }[]
+}
 
 const sourceFolder = path.resolve(pwdFolder, config.SourceFolder || 'src')
-const functionsFolder = path.resolve(pwdFolder, '.functions')
+const functionsFolder = path.resolve(pwdFolder, '.lploy-functions')
 
 for (const functionConfig of config.Functions) {
   const functionTasks: any[] = []
@@ -23,15 +32,13 @@ for (const functionConfig of config.Functions) {
     title: 'webpack',
     task: () => execa(path.resolve(pwdFolder, 'node_modules/webpack/bin/webpack.js'), [
       '--config',
-      path.resolve(pwdFolder, 'webpack.config.js'),
+      path.resolve(pwdFolder, 'webpack.config.ts'),
       '--entry',
       path.resolve(sourceFolder, functionConfig.Source),
       '--output-path',
       path.resolve(functionsFolder, functionConfig.Name),
       '--output-filename',
-      'main.js',
-      '--output-library',
-      functionConfig.Name
+      'index.js'
     ])
   })
 
@@ -52,7 +59,7 @@ for (const functionConfig of config.Functions) {
       'lambda',
       'update-function-code',
       '--function-name',
-      functionConfig.Name,
+      `${config.NamePrefix}${functionConfig.Name}`,
       '--zip-file',
       `fileb://${path.resolve(functionsFolder, `${functionConfig.Name}.zip`)}`
     ])

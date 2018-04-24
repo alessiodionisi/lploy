@@ -6,6 +6,8 @@
 
 Deploy your Webpack functions to AWS Lambda
 
+# WIP!
+
 ## Quick start
 - Install lploy as dev dependency of your project
   
@@ -50,12 +52,12 @@ Deploy your Webpack functions to AWS Lambda
   target: 'node'
   ```
 
-  externals aws-sdk
+  <!-- externals aws-sdk
   ```
   externals: {
     'aws-sdk': 'aws-sdk'
   }
-  ```
+  ``` -->
 
 - Run lploy on project folder
 
